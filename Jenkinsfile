@@ -13,8 +13,9 @@ pipeline {
             steps {
                 script {
                     def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                    def jiraPattern = ~/[A-Z]+-\d+:.*/
-                    if (!commitMessage.matches(jiraPattern)) {
+                    echo "Commit message: ${commitMessage}"
+                    def jiraPattern = ~/(?i)[A-Z]+-\d+/
+                    if (!jiraPattern.matcher(commitMessage).find()) {
                         error "Commit message does not follow the best practices."
                     }
                 }
