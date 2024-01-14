@@ -1,4 +1,5 @@
 pipeline {
+<<<<<<< HEAD
     agent any
     stages {
         stage('Clone repository') {
@@ -21,6 +22,15 @@ pipeline {
         stage('Lint Dockerfile') {
             steps {
                 sh 'docker run --rm -i hadolint/hadolint < Dockerfile'
+=======
+    agent {
+        docker { image 'node:20.10.0-alpine3.19' }
+    }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+>>>>>>> 6e8c29a (test dev task should be error)
             }
         }
     }
