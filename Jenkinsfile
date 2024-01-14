@@ -1,11 +1,26 @@
 pipeline {
-    agent {
-        docker { image 'node:20.10.0-alpine3.19' }
-    }
+    agent any
     stages {
-        stage('Test') {
+        stage('Clone repository') {
             steps {
-                sh 'node --version'
+                checkout scm
+            }
+        }
+        stage('Check commit message') {
+            steps {
+                script {
+                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    echo "Commit message: ${commitMessage}"
+                    def jiraPattern = ~/(?i)[A-Z]+-\d+/
+                    if (!jiraPattern.matcher(commitMessage).find()) {
+                        error "Commit message does not follow the best practices."
+                    }
+                }
+            }
+        }
+        stage('Lint Dockerfile') {
+            steps {
+                sh 'docker run --rm -i hadolint/hadolint < Dockerfile'
             }
         }
     }
